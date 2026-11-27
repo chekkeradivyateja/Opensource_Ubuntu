@@ -12,9 +12,12 @@ on Ubuntu, with one installer.
 | verilator_coverage | 5.054 (part of Verilator) | merge coverage of several tests, text reports, export to lcov | `packages/` |
 | UVM library | 2020.3.1 (verilator/uvm commit 656f20d, 2 patches) | UVM class library for testbenches | `packages/` |
 | Surfer | 0.7.0 | waveform viewer (VCD, FST) | `packages/` (official release) |
+| Icarus Verilog | 13.0 | Verilog simulation (4-state, X/Z), VCD/FST waves | `packages/` (built from v13_0) |
 | GTKWave | 3.3.116 | second waveform viewer; `fst2vcd` converter | apt |
 | lcov (genhtml) | 2.0 | HTML coverage report | apt |
-| Yosys | 0.33 | synthesis check of the RTL, cell count | apt |
+| Yosys | 0.33 | synthesis check of the RTL, cell count, schematics | apt |
+| Graphviz | 2.42.2 (`dot -V` says 2.43.0) | draws schematics and FSM diagrams (SVG/PNG/PDF) | apt |
+| gvim | 9.1 (`vim-gtk3`) | editor with Verilog/SystemVerilog colours | apt |
 | z3 | 4.8.12 | constraint solver used by `randomize()` | apt |
 | g++ | 13.2 | compiles the C++ model that Verilator generates | apt |
 | make | 4.3 | runs the Makefiles | apt |
@@ -78,12 +81,14 @@ The installer writes `install.log` in the repository folder.
 | Makefile template (simple, examples/counter) | tested on 2026-11-20 with Verilator 5.054, one machine |
 | Makefile templates sv/ and uvm/ with examples/sv_project and uvm_project | all targets incl. failure detection tested on 2026-11-20 with Verilator 5.054, one machine |
 | docs/USER_GUIDE.md commands | all run on 2026-11-20 with Verilator 5.054, one machine |
+| Icarus Verilog 13.0, Graphviz, gvim (packages/scripts/test_new_tools.sh) | Icarus 13.0 built and installed on one Ubuntu 24.04 machine on 2026-11-27; final test run with the package: pending; installer with these tools: not run yet |
 | docs/SV_UVM_SUPPORT.md (docs/support_tests) | 83 SystemVerilog tests + 1 UVM test pass on 2026-11-20, one machine |
 
 ## Folders
 - install.py  one-command installer (Python standard library only)
 - installer/  installer notes
-- packages/  prebuilt Verilator 5.054, patched UVM library, Surfer v0.7.0
+- packages/  prebuilt Verilator 5.054, patched UVM library, Surfer v0.7.0, Icarus Verilog 13.0;
+  `packages/scripts/` maintainer build/test scripts
 - makefile_templates/  `sv/Makefile` (SystemVerilog project), `uvm/Makefile` (UVM project), `Makefile` (simple, used by examples/counter)
 - examples/  `counter` (smallest example), `sv_project` (SVA, covergroups, constrained random), `uvm_project` (UVM)
 - docs/  user guide, SV/UVM support guide with its tests, assertions, coverage, status report

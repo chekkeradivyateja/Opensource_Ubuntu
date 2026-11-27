@@ -19,11 +19,13 @@ are listed as tested. All tests: Verilator 5.054, Ubuntu 24.04.5 LTS x86-64, one
 | 2026-11-20 | Makefile templates `sv/`, `uvm/` and the simple `Makefile` with their examples: every target, and failure detection with a bug injected in the design | pass |
 | 2026-11-20 | every command in `USER_GUIDE.md` | pass |
 | 2026-11-20 | `SV_UVM_SUPPORT.md`: 83 SystemVerilog tests + 1 UVM test in `support_tests/` | 84/84 pass (also confirmed on a fresh clone from GitHub) |
+| 2026-11-27 | Icarus Verilog 13.0 built and installed with `packages/scripts/build_iverilog.sh` (source SHA-256 checked); the script stopped before packing (fixed; `--pack-only` added) | built; packing and the final `test_new_tools.sh` run pending |
 
 UVM library patches (in `src/base/uvm_component.svh`):
 `bit clone;` -> `bit clone_flag;` and `wrapper.clone = clone;` -> `wrapper.clone_flag = clone;`.
 
 ## Not tested yet
+- `install.py` with Icarus 13.0, Graphviz and gvim added (self-test has 4 new checks).
 - `install.py` on a **fresh** Ubuntu 24.04 machine (planned).
 - The Ubuntu 22.04 -> 24.04 upgrade offered by the installer (the commands were only simulated).
 - Opening Surfer, GTKWave or the browser from `make waves` / `make covopen` on another machine.

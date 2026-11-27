@@ -18,19 +18,22 @@ DEST = Path("/opt/eda/open_ver_flow")
 VERILATOR = DEST / "verilator-5.054"
 UVM = DEST / "uvm-2020.3.1-vlt-656f20d-patched"
 SURFER = DEST / "surfer-0.7.0"
+ICARUS = DEST / "iverilog-13.0"
 ARCHIVES = {  # archive -> folder it creates
     "verilator-5.054-ubuntu24.04-x86_64.tar.gz": VERILATOR,
     "uvm-2020.3.1-vlt-656f20d-patched.tar.gz": UVM,
     "surfer_linux_v0.7.0.zip": SURFER,
+    "iverilog-13.0-ubuntu24.04-x86_64.tar.gz": ICARUS,
 }
 APT = ["yosys", "z3", "lcov", "gtkwave", "g++", "make", "perl", "python3",
-       "ccache", "zlib1g-dev", "liblz4-dev"]
+       "ccache", "zlib1g-dev", "liblz4-dev", "graphviz", "vim-gtk3"]
+TOOL_PATH = f"{VERILATOR}/bin:{ICARUS}/bin:{SURFER}"
 BASHRC = Path.home() / ".bashrc"
 BEGIN, END = "# >>> open_ver_flow >>>", "# <<< open_ver_flow <<<"
 ENV = {
     "VERILATOR_ROOT": f"{VERILATOR}/share/verilator",
     "UVM_HOME": f"{UVM}/src",
-    "PATH": f"{VERILATOR}/bin:{SURFER}:" + os.environ.get("PATH", ""),
+    "PATH": f"{TOOL_PATH}:" + os.environ.get("PATH", ""),
 }
 UVM_TB = """import uvm_pkg::*;
 `include "uvm_macros.svh"
@@ -44,6 +47,24 @@ class smoke_test extends uvm_test;
   endtask
 endclass
 module tb; initial run_test("smoke_test"); endmodule
+"""
+# Icarus self-test: a 4-bit counter (also drawn by Yosys + Graphviz) and a self-checking testbench
+ICARUS_RTL = """module cnt4(input clk, input rst, output reg [3:0] q);
+  always @(posedge clk) if (rst) q <= 4'd0; else q <= q + 4'd1;
+endmodule
+"""
+ICARUS_TB = """module cnt4_tb;
+  reg clk = 0, rst = 1; wire [3:0] q; integer i, err = 0;
+  cnt4 dut(.clk(clk), .rst(rst), .q(q));
+  always #5 clk = ~clk;
+  initial begin
+    $dumpfile("cnt4.vcd"); $dumpvars(0, cnt4_tb);
+    @(negedge clk) rst = 0;
+    for (i = 1; i <= 20; i = i + 1) begin @(negedge clk); if (q !== i[3:0]) err = err + 1; end
+    if (err == 0) $display("PASS: all checks passed"); else $display("FAIL: %0d errors", err);
+    $finish;
+  end
+endmodule
 """
 
 
@@ -136,6 +157,11 @@ def check():
         v = (run([other, "--version"], env=env)[1].strip().splitlines() or ["unknown version"])[0]
         rows.append(("INFO", "Other Verilator", f"{v} at {other}", None,
                      "it is kept; the new 5.054 comes first in PATH in new terminals"))
+    other = shutil.which("iverilog")
+    if other and not other.startswith(str(DEST)):
+        v = (run([other, "-V"])[1].strip().splitlines() or ["unknown version"])[0]
+        rows.append(("INFO", "Other Icarus Verilog", f"{v} at {other}", None,
+                     "it is kept; the new 13.0 comes first in PATH in new terminals"))
 
     for st, item, found, req, fix in rows:
         if req is None:
@@ -257,7 +283,7 @@ def install():
         marker.write_text(digest)
     block = "\n".join([BEGIN, f"export VERILATOR_ROOT={ENV['VERILATOR_ROOT']}",
                        f"export UVM_HOME={ENV['UVM_HOME']}",
-                       f"export PATH={VERILATOR}/bin:{SURFER}:$PATH", END])
+                       f"export PATH={TOOL_PATH}:$PATH", END])
     write_bashrc(strip_block(BASHRC.read_text() if BASHRC.exists() else "") + "\n" + block + "\n")
     log(f"== environment written to {BASHRC} (open a new terminal to use it)")
 
@@ -316,6 +342,20 @@ def selftest(uvm):
         ("Yosys synthesis", ["yosys", "-p", "read_verilog -sv ../rtl/counter.sv; synth -top counter; stat"],
          sim, "Number of cells"),
     ]
+    (tmp / "design").mkdir()
+    (tmp / "design" / "cnt4.v").write_text(ICARUS_RTL)
+    (tmp / "design" / "cnt4_tb.v").write_text(ICARUS_TB)
+    d = tmp / "design"
+    tests += [
+        ("Icarus Verilog compile", ["iverilog", "-g2012", "-s", "cnt4_tb", "-o", "sim.out", "cnt4.v", "cnt4_tb.v"],
+         d, None),
+        ("Icarus Verilog simulation + VCD", ["sh", "-c", "vvp -n sim.out && test -s cnt4.vcd"], d,
+         "PASS: all checks passed"),
+        ("Yosys schematic + Graphviz (SVG)",
+         ["sh", "-c", "yosys -q -p 'read_verilog cnt4.v; prep -top cnt4; show -format dot -prefix cnt4 cnt4' "
+                      "&& dot -Tsvg cnt4.dot -o cnt4.svg && test -s cnt4.svg"], d, None),
+        ("gvim (GTK3 window support)", ["gvim", "--version"], d, "+gui_gtk3"),
+    ]
     if uvm:
         (tmp / "uvm").mkdir()
         (tmp / "uvm" / "tb.sv").write_text(UVM_TB)
@@ -334,8 +374,9 @@ def selftest(uvm):
         ok &= good
         log(f"{'PASS' if good else 'FAIL'}  {name}")
     log("== versions")
-    for cmd in (["verilator", "--version"], ["yosys", "-V"], ["z3", "--version"], ["lcov", "--version"],
-                ["gtkwave", "--version"], ["surfer", "--version"]):
+    for cmd in (["verilator", "--version"], ["iverilog", "-V"], ["yosys", "-V"], ["dot", "-V"],
+                ["z3", "--version"], ["lcov", "--version"], ["gtkwave", "--version"], ["surfer", "--version"],
+                ["gvim", "--version"]):
         code, out = run(cmd, env=env)
         line = next((l for l in out.splitlines() if l.strip()), "")
         log(f"{'PASS' if code == 0 else 'FAIL'}  {cmd[0]}: {line.strip()}")
@@ -348,7 +389,7 @@ def selftest(uvm):
 
 
 def uninstall():
-    """Remove only the 3 tool folders this installer created and its ~/.bashrc block."""
+    """Remove only the tool folders this installer created (ARCHIVES) and its ~/.bashrc block."""
     for folder in ARCHIVES.values():
         if folder.exists():
             log(f"   removing {folder}" if safe_rmtree(folder, DEST) else f"   kept {folder}")
