@@ -5,6 +5,9 @@ date in the Status table of the main README). The example files used here are in
 `examples/sv_project/` (SystemVerilog + SVA + functional coverage) and
 `examples/uvm_project/` (UVM).
 
+All commands on one page, including Verilog (`.v`) with Icarus Verilog, schematics and
+FSM diagrams: [COMMANDS.md](COMMANDS.md).
+
 Contents
 1. Before you start
 2. SystemVerilog simulation (single files)

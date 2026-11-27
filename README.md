@@ -66,6 +66,9 @@ Installer options: `python3 install.py --check` (only check, changes nothing),
 The installer writes `install.log` in the repository folder.
 
 ## How to use the tools
+- **[docs/COMMANDS.md](docs/COMMANDS.md)**: every command on one page: Verilog (`.v`) with Icarus,
+  SystemVerilog (`.sv`) and UVM with Verilator, compile, simulation, waveforms, coverage, synthesis,
+  schematics, FSM diagram, Makefile targets.
 - **[docs/USER_GUIDE.md](docs/USER_GUIDE.md)**: tested commands for simulation, waves, SVA,
   code coverage, functional coverage, constrained random, UVM and Yosys, plus the Makefile
   templates for your own projects.
@@ -90,7 +93,7 @@ The installer writes `install.log` in the repository folder.
 - packages/  prebuilt Verilator 5.054, patched UVM library, Surfer v0.7.0, Icarus Verilog 13.0;
   `packages/scripts/` maintainer build/test scripts
 - makefile_templates/  `sv/Makefile` (SystemVerilog project), `uvm/Makefile` (UVM project), `Makefile` (simple, used by examples/counter)
-- examples/  `counter` (smallest example), `sv_project` (SVA, covergroups, constrained random), `uvm_project` (UVM)
+- examples/  `counter` (smallest example), `seq_det` (Verilog design), `sv_project` (SVA, covergroups, constrained random), `uvm_project` (UVM)
 - docs/  user guide, SV/UVM support guide with its tests, assertions, coverage, status report
 - licenses/  license files of the tools
 
