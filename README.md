@@ -81,7 +81,7 @@ The installer writes `install.log` in the repository folder.
 | Makefile template (simple, examples/counter) | tested on 2026-11-20 with Verilator 5.054, one machine |
 | Makefile templates sv/ and uvm/ with examples/sv_project and uvm_project | all targets incl. failure detection tested on 2026-11-20 with Verilator 5.054, one machine |
 | docs/USER_GUIDE.md commands | all run on 2026-11-20 with Verilator 5.054, one machine |
-| Icarus Verilog 13.0, Graphviz, gvim (packages/scripts/test_new_tools.sh) | tested on 2026-11-27 on one Ubuntu 24.04 machine: 30 of 31 checks passed, the 1 FAIL was a wrong check in the test (fixed); installer with these tools: not run yet |
+| Icarus Verilog 13.0, Graphviz, gvim (packages/scripts/test_new_tools.sh) | tested on 2026-11-27 on one Ubuntu 24.04 machine: 30 of 31 checks passed, the 1 FAIL was a wrong check in the test (fixed); `install.py` with these tools: ALL PASSED on the same machine (not a fresh machine) |
 | docs/SV_UVM_SUPPORT.md (docs/support_tests) | 83 SystemVerilog tests + 1 UVM test pass on 2026-11-20, one machine |
 
 ## Folders

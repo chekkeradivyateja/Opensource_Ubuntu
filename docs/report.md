@@ -20,13 +20,13 @@ are listed as tested. All tests: Verilator 5.054, Ubuntu 24.04.5 LTS x86-64, one
 | 2026-11-20 | every command in `USER_GUIDE.md` | pass |
 | 2026-11-20 | `SV_UVM_SUPPORT.md`: 83 SystemVerilog tests + 1 UVM test in `support_tests/` | 84/84 pass (also confirmed on a fresh clone from GitHub) |
 | 2026-11-27 | Icarus Verilog 13.0 built and installed with `packages/scripts/build_iverilog.sh` (source SHA-256 checked); the script stopped before packing (fixed; `--pack-only` added), then packed with `--pack-only` (25,423,299 bytes). `packages/scripts/test_new_tools.sh`: Graphviz (apt), gvim (apt `vim-gtk3`, window opened with SV colours), Icarus simulation, VCD/FST, X/Z, bug and syntax-error detection, SV subset, Yosys schematics + FSM diagram through Graphviz, package unpacks like `install.py` | 30 of 31 passed; the 1 FAIL was the test's own gvim version check looking for a word Ubuntu's gvim does not print (check fixed, not re-run) |
+| 2026-11-27 | `install.py` with Icarus 13.0 (package from `packages/`, SHA-256 checked), Graphviz and gvim (apt): replaced the build folder with the package copy, self-test incl. Icarus compile, Icarus simulation + VCD, Yosys schematic through Graphviz, gvim GTK3 support; then one example run by the owner | ALL PASSED (same machine as the build, not a fresh machine) |
 
 UVM library patches (in `src/base/uvm_component.svh`):
 `bit clone;` -> `bit clone_flag;` and `wrapper.clone = clone;` -> `wrapper.clone_flag = clone;`.
 
 ## Not tested yet
-- `install.py` with Icarus 13.0, Graphviz and gvim added (self-test has 4 new checks).
-- `install.py` on a **fresh** Ubuntu 24.04 machine (planned).
+- `install.py` (now incl. Icarus 13.0, Graphviz, gvim) on a **fresh** Ubuntu 24.04 machine (planned).
 - The Ubuntu 22.04 -> 24.04 upgrade offered by the installer (the commands were only simulated).
 - Opening Surfer, GTKWave or the browser from `make waves` / `make covopen` on another machine.
 - UVM without the two patches.
