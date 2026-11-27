@@ -7,8 +7,8 @@
 #
 # Installs Graphviz and gvim (vim-gtk3) with apt if missing (asks for your sudo password).
 # A gvim window opens for a moment and closes by itself.
-# Works only in a new folder under /tmp; prints PASS/FAIL per check and a summary.
-# Writes the full output to /tmp/new_tools_test_<time>.txt (send that file back).
+# Works only in a new folder under ~/repo_tmp and deletes nothing (no rm); prints PASS/FAIL per check
+# and a summary. Writes the full output to ~/repo_tmp/new_tools_test_<time>.txt (send that file back).
 set -uo pipefail
 
 VER=13.0
@@ -16,7 +16,8 @@ PREFIX=/opt/eda/open_ver_flow/iverilog-$VER
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
 PKG=$REPO/packages/iverilog-$VER-ubuntu24.04-x86_64.tar.gz
 STAMP=$(date +%Y%m%d_%H%M%S)
-REPORT=/tmp/new_tools_test_$STAMP.txt
+mkdir -p "$HOME/repo_tmp"
+REPORT=$HOME/repo_tmp/new_tools_test_$STAMP.txt
 exec > >(tee "$REPORT") 2>&1
 
 PASS=0; FAIL=0
@@ -48,7 +49,7 @@ if [ ${#missing[@]} -gt 0 ]; then
 fi
 for p in graphviz vim-gtk3; do info "apt package $p $(dpkg-query -W -f='${Version}' "$p" 2>/dev/null)"; done
 
-W=$(mktemp -d /tmp/new_tools_test_XXXXXX)
+W=$(mktemp -d "$HOME/repo_tmp/new_tools_test_XXXX")
 cd "$W"
 
 # ---------------------------------------------------------------- gvim
@@ -65,18 +66,16 @@ module s; logic [3:0] x; initial begin x = 4'hA; $display("%h", x); end endmodul
 EOF
 # file type + syntax colours with filetype/syntax switched on (the GUI test below checks Ubuntu's defaults)
 for f in ed.v ed.sv; do
-  rm -f ft.txt
   vim -Nes -c 'filetype plugin indent on' -c 'syntax on' -c "e $f" \
-      -c "call writefile([&ft . ' ' . exists('b:current_syntax')], 'ft.txt')" -c 'qa!' >/dev/null 2>&1
+      -c "call writefile([&ft . ' ' . exists('b:current_syntax')], 'ft_$f.txt')" -c 'qa!' >/dev/null 2>&1
   want=$([ $f = ed.v ] && echo "verilog 1" || echo "systemverilog 1")
-  got=$(cat ft.txt 2>/dev/null)
+  got=$(cat ft_$f.txt 2>/dev/null)
   [ "$got" = "$want" ] && ok "$f opens as ${want% 1} with colours" || bad "$f file type/colours: got '$got' (expected '$want')"
 done
 # edit and save without the GUI (same editing engine as gvim)
 check "edit + save a file (vim -es)" "" sh -c "vim -Nes -c '1normal! O// edited by test' -c 'wq' ed.v && head -n 1 ed.v | grep -q 'edited by test'"
 # open the real gvim window with the user's normal settings, let it write a file from inside the GUI, then close
 if [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
-  rm -f gvim_ok.txt
   timeout 30 gvim -f -c "call writefile(['gui ' . has('gui_running') . ' ft ' . &ft . ' syn ' . exists('b:current_syntax')], 'gvim_ok.txt')" -c 'qa!' ed.sv >/dev/null 2>&1
   got=$(cat gvim_ok.txt 2>/dev/null)
   [ "$got" = "gui 1 ft systemverilog syn 1" ] && ok "gvim window opened and closed (GUI running, .sv in colour by default)" \
