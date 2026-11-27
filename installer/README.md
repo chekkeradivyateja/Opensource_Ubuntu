@@ -3,7 +3,7 @@
 The installer is `../install.py` (Python standard library only). Run it from the
 repository folder as your normal user, **not** with sudo:
 
-    cd ~/OpenSource_Ubuntu_Ver
+    cd ~/Opensource_Ubuntu
     python3 install.py              # check, install, self-test
     python3 install.py --uvm-test   # same + compile and run a UVM test (about 4 minutes more)
     python3 install.py --check      # only check the machine; changes nothing
@@ -66,7 +66,7 @@ saved as `~/.bashrc.open_ver_flow.bak`.
 
 **Safety tip:** copy and paste commands; do not retype them. Never type `rm -rf` with `~`: one
 extra space (`rm -rf ~/ folder`) deletes your whole home folder. To get rid of an old clone,
-rename it instead: `mv ~/OpenSource_Ubuntu_Ver ~/OpenSource_Ubuntu_Ver.old`.
+rename it instead: `mv ~/Opensource_Ubuntu ~/Opensource_Ubuntu.old`.
 
 ## Running it again
 Safe: already unpacked packages are skipped (checked by checksum), the `~/.bashrc` block is
@@ -86,7 +86,7 @@ replaced, and the self-test runs again.
 | `Ubuntu is still 22.04...: the upgrade did not run` | read what `do-release-upgrade` printed (for example "No new release found", or you answered No); fix that, then run again |
 | `FAIL  User: ... required normal user` | run `python3 install.py` without `sudo` |
 | `FAIL  apt: found busy` | Ubuntu is installing updates; wait a few minutes and run again |
-| `FAIL  packages/...: found checksum mismatch` | the download is damaged; rename the folder (`mv ~/OpenSource_Ubuntu_Ver ~/OpenSource_Ubuntu_Ver.old`) and clone again |
+| `FAIL  packages/...: found checksum mismatch` | the download is damaged; rename the folder (`mv ~/Opensource_Ubuntu ~/Opensource_Ubuntu.old`) and clone again |
 | `FAIL  Internet: ...` | connect to the internet, or install the listed apt packages another way |
 | `FAIL  sudo did not work` | wrong password or no sudo rights; ask your administrator |
 | `verilator: command not found` after `ALL PASSED` | open a new terminal |

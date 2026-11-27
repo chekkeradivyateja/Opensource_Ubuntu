@@ -32,8 +32,9 @@ updates may raise them slightly. Licenses: see `licenses/`.
 
 ## Install (step by step)
 Copy and paste each command; do not retype it. None of the steps delete anything.
-If you cloned the repository before, update it with `cd ~/OpenSource_Ubuntu_Ver && git pull`
-(or rename the old folder: `mv ~/OpenSource_Ubuntu_Ver ~/OpenSource_Ubuntu_Ver.old`).
+If you cloned it before as `~/Opensource_Ubuntu`, update it with `cd ~/Opensource_Ubuntu && git pull`.
+The repository was renamed from `OpenSource_Ubuntu_Ver`: if you have a folder with that old name,
+rename it (`mv ~/OpenSource_Ubuntu_Ver ~/OpenSource_Ubuntu_Ver.old`) and follow the steps below.
 Never use `rm -rf` with `~`: one extra space (`rm -rf ~/ folder`) deletes your whole home folder.
 
 1. Open a terminal (Ctrl+Alt+T).
@@ -44,8 +45,8 @@ Never use `rm -rf` with `~`: one extra space (`rm -rf ~/ folder`) deletes your w
 3. Download this repository and run the installer:
 
         cd ~
-        git clone https://github.com/chekkeradivyateja/OpenSource_Ubuntu_Ver.git
-        cd OpenSource_Ubuntu_Ver
+        git clone https://github.com/chekkeradivyateja/Opensource_Ubuntu.git
+        cd Opensource_Ubuntu
         python3 install.py
 
 4. Answer the questions: your sudo password, then `Y` to install the missing apt packages.
@@ -55,7 +56,7 @@ Never use `rm -rf` with `~`: one extra space (`rm -rf ~/ folder`) deletes your w
 
         verilator --version          # Verilator 5.054 2026-11-01 rev v5.054
         echo $UVM_HOME               # /opt/eda/open_ver_flow/uvm-2020.3.1-vlt-656f20d-patched/src
-        cd ~/OpenSource_Ubuntu_Ver/examples/sv_project/sim && make regress    # REGRESSION PASSED
+        cd ~/Opensource_Ubuntu/examples/sv_project/sim && make regress    # REGRESSION PASSED
 
 Installer options: `python3 install.py --check` (only check, changes nothing),
 `--uvm-test` (also compile and run a UVM test, about 4 minutes more), `--uninstall`.

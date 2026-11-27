@@ -35,7 +35,7 @@ To follow sections 2-7, copy the example files into an empty folder:
     cp <repo>/examples/sv_project/rtl/alu.sv <repo>/examples/sv_project/sva/alu_sva.sv \
        <repo>/examples/sv_project/tb/alu_tb_pkg.sv <repo>/examples/sv_project/tb/tb_top.sv .
 
-(`<repo>` is the folder where you cloned this repository, for example `~/OpenSource_Ubuntu_Ver`.)
+(`<repo>` is the folder where you cloned this repository, for example `~/Opensource_Ubuntu`.)
 
 | File | What it is |
 |---|---|
