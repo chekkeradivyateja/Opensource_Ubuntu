@@ -354,7 +354,7 @@ def selftest(uvm):
         ("Yosys schematic + Graphviz (SVG)",
          ["sh", "-c", "yosys -q -p 'read_verilog cnt4.v; prep -top cnt4; show -format dot -prefix cnt4 cnt4' "
                       "&& dot -Tsvg cnt4.dot -o cnt4.svg && test -s cnt4.svg"], d, None),
-        ("gvim (GTK3 window support)", ["gvim", "--version"], d, "+gui_gtk3"),
+        ("gvim (GTK3 window support)", ["gvim", "--version"], d, "GTK3 GUI"),
     ]
     if uvm:
         (tmp / "uvm").mkdir()

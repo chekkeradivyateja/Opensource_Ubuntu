@@ -55,7 +55,8 @@ cd "$W"
 # ---------------------------------------------------------------- gvim
 echo; echo "== gvim (apt vim-gtk3)"
 check "gvim is installed" "" command -v gvim
-check "gvim version 9.x with GTK3 GUI" "+gui_gtk3" sh -c 'gvim --version | head -n 1 && gvim --version | grep -o "+gui_gtk3"'
+# Ubuntu's gvim prints "Huge version with GTK3 GUI." in its header (there is no "+gui_gtk3" feature word)
+check "gvim version 9.x with GTK3 GUI" "GTK3 GUI" sh -c 'gvim --version | grep -E "^VIM - Vi IMproved|version with"'
 cat > ed.v <<'EOF'
 module m(input a, output b);
   assign b = a;
